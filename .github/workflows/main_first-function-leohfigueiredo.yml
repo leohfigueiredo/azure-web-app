@@ -41,4 +41,4 @@ jobs:
           app-name: 'first-function-leohfigueiredo'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3F857039A6D34324996CA879B3A7AF77 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CD1FBE27B01C4203AFB342F785C036DE }}
