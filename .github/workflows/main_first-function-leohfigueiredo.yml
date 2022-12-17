@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js project to Azure Function App - first-function-leohfigueiredo
+name: Build and deploy Java project to Azure Function App - first-function-leohfigueiredo
 
 on:
   push:
@@ -10,8 +10,9 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '16.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  AZURE_FUNCTIONAPP_NAME: first-function-leohfigueiredo # set this to your function app name on Azure
+  PACKAGE_DIRECTORY: '.' # set this to the directory which contains pom.xml file
+  JAVA_VERSION: '8' # set this to the java version to use
 
 jobs:
   build-and-deploy:
@@ -20,25 +21,23 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2
 
-      - name: Setup Node ${{ env.NODE_VERSION }} Environment
-        uses: actions/setup-node@v1
+      - name: Setup Java Sdk ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v1
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          java-version: ${{ env.JAVA_VERSION }}
 
-      - name: 'Resolve Project Dependencies Using Npm'
+      - name: 'Restore Project Dependencies Using Mvn'
         shell: pwsh
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          pushd './${{ env.PACKAGE_DIRECTORY }}'
+          mvn clean package
           popd
-
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
           app-name: 'first-function-leohfigueiredo'
           slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D605A1EC2F874D6AAB48D5807A03F635 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_77F567F2DF734531BDD0B5E7FEA81B4E }}
+          package: '${{ env.PACKAGE_DIRECTORY }}'
+          respect-pom-xml: true
